@@ -1,19 +1,10 @@
 import fetch from "node-fetch";
 import _ from "lodash";
+import "dotenv/config";
 
-const urls = ["https://dummy.restapiexample.com/api/v1/employee/1",
-"https://dummy.restapiexample.com/api/v1/employee/2",
-"https://dummy.restapiexample.com/api/v1/employee/3", 
-"https://dummy.restapiexample.com/api/v1/employee/4",
-"https://dummy.restapiexample.com/api/v1/employee/5",
-"https://dummy.restapiexample.com/api/v1/employee/6"];
-
-/*const urls = ['https://api.github.com/users/iliakan',
-'https://api.github.com/users/remy',
-'https://api.github.com/users/jeresig'];*/
-
-const MAX_CONCURRENCY = 3;
-const MAX_RETRY = 3;
+const urls = JSON.parse(process.env.URLS);
+const MAX_CONCURRENCY = process.env.MAX_CONCURRENCY;
+const MAX_RETRY = process.env.MAX_RETRY;
 let retries = 0;
 
 const delay = (time) => new Promise(resolve => setTimeout(resolve, time));
@@ -60,7 +51,7 @@ const retry = async (responsesToRetry, responses) => {
         const urlsToRetry = responsesToRetry.map(x => x.url);
 
         // Delay operation to cool down rate limiter.
-        await delay(1000);
+        await delay(_.parseInt(process.env.DELAY));
         
         retries++;
         const retryResponses = await fetchURLs(urlsToRetry);
