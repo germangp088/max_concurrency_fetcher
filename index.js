@@ -54,6 +54,8 @@ const retry = async (responsesToRetry, responses) => {
         await delay(_.parseInt(process.env.DELAY));
         
         retries++;
+
+        // Executes fetchURLs recursivelly to retry the unsuccesfully requests.
         const retryResponses = await fetchURLs(urlsToRetry);
         responses = responses.concat(retryResponses);
     }
