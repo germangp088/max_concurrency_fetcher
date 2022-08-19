@@ -53,6 +53,21 @@ const buildRequests = (urls) => {
     return requests;
 }
 
+const retry = async (responsesToRetry, responses) => {
+    if (responsesToRetry.length > 0 && retries < MAX_RETRY) {
+        console.log(`Retry number: ${(retries + 1)}`);
+        responses = responses.filter(x => x.success);
+        const urlsToRetry = responsesToRetry.map(x => x.url);
+
+        // Delay operation to cool down rate limiter.
+        await delay(1000);
+        
+        retries++;
+        const retryResponses = await fetchURLs(urlsToRetry);
+        responses = responses.concat(retryResponses);
+    }
+}
+
 const fetchURLs = async(urls) => {
     const requests = buildRequests (urls);
 
@@ -66,20 +81,10 @@ const fetchURLs = async(urls) => {
     }
 
     const responsesToRetry = responses.filter(x => !x.success);
-    if (responsesToRetry.length > 0 && retries < MAX_RETRY) {
-        console.log(`Retry number: ${(retries + 1)}`);
-        responses = responses.filter(x => x.success);
-        const urlsToRetry = responsesToRetry.map(x => x.url);
-
-        // Delay operation to cool down rate limiter.
-        await delay(1000);
-        
-        retries++;
-        const retryResponses = await fetchURLs(urlsToRetry);
-        responses = responses.concat(retryResponses);
-    }
+    await retry(responsesToRetry, responses);
 
     return responses;
 }
 
-fetchURLs(urls).then((responses) => console.log(_.cloneDeep(responses)));
+// Log responses sorted by success.
+fetchURLs(urls).then((responses) => console.log(_.cloneDeep(responses.sort((a, b) => b.success - a.success))));
