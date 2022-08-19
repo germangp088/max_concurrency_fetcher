@@ -1,16 +1,16 @@
 import fetch from "node-fetch";
 import _ from "lodash";
 
-/*const urls = ["https://dummy.restapiexample.com/api/v1/employee/1",
+const urls = ["https://dummy.restapiexample.com/api/v1/employee/1",
 "https://dummy.restapiexample.com/api/v1/employee/2",
 "https://dummy.restapiexample.com/api/v1/employee/3", 
 "https://dummy.restapiexample.com/api/v1/employee/4",
 "https://dummy.restapiexample.com/api/v1/employee/5",
-"https://dummy.restapiexample.com/api/v1/employee/6"];*/
+"https://dummy.restapiexample.com/api/v1/employee/6"];
 
-const urls = ['https://api.github.com/users/iliakan',
+/*const urls = ['https://api.github.com/users/iliakan',
 'https://api.github.com/users/remy',
-'https://api.github.com/users/jeresig'];
+'https://api.github.com/users/jeresig'];*/
 
 const MAX_CONCURRENCY = 3;
 const MAX_RETRY = 3;
@@ -41,7 +41,7 @@ const fetchUrl = async (url) => {
     return data;
 }
 
-const fetchURLs = async(urls) => {
+const buildRequests = (urls) => {
     const requests = [];
 
     for (let index = 0; index < urls.length; index++) {
@@ -49,6 +49,12 @@ const fetchURLs = async(urls) => {
         const request = fetchUrl(urls[index]);
         requests.push(request);
     }
+
+    return requests;
+}
+
+const fetchURLs = async(urls) => {
+    const requests = buildRequests (urls);
 
     const maxSplit = Math.ceil(requests.length / MAX_CONCURRENCY);
     console.log({maxSplit});
