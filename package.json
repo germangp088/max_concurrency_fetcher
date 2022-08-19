@@ -1,10 +1,12 @@
 {
-  "name": "coding",
+  "name": "max_concurrency_fetcher",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node index.js",
+    "start:docker": "docker-compose up --build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
